@@ -32,8 +32,6 @@ impl Multipermutation {
 
     fn successor(&mut self) -> bool {
         let mut i = self.values.len() - 1;
-
-        print_type_of(&i);
         
         while i >= 0 {
             if self.values[i] < self.max_character {
@@ -50,10 +48,24 @@ impl Multipermutation {
 }
 
 fn main() {
-    let mut perm = Multipermutation::new("abb", 'c');
+    let mut perm1 = Multipermutation::new("abb", 'c');
+    let mut perm2 = Multipermutation::new("ccc", 'c');
     
-    perm.successor();
-    perm.successor();
+    // println!("Result: {:?}", perm1.compare(&perm2) == Ordering::Greater);
+    let result = mobius_function(&mut perm1, &mut perm2);
+    println!("Result: {}", result);
+}
 
-    println!("{:?}", perm.values);   
+fn mobius_function(left: &mut Multipermutation, right: &mut Multipermutation) -> i32 {
+    if left.compare(&right) == Ordering::Greater {
+        return 1;
+    }
+    else {
+        let mut res: i32 = 0;
+        while left.compare(&right) == Ordering::Less {
+            left.successor();
+            res += mobius_function(left, right);
+        }    
+        return -res;
+    }
 }
