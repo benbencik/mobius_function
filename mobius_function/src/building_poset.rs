@@ -1,6 +1,9 @@
 use std::collections::{LinkedList, HashMap};
 use crate::is_contained::is_contained;
 
+/* 
+NAIVE IMPLEMENTATION =================================================================
+*/
 pub fn build_poset(start: &Vec<u8>, goal: &Vec<u8>) -> HashMap<Vec<u8>, Vec<Vec<u8>>>{
     /*
     Poset is built from the goal permutation
@@ -15,11 +18,8 @@ pub fn build_poset(start: &Vec<u8>, goal: &Vec<u8>) -> HashMap<Vec<u8>, Vec<Vec<
 
     while queue.len() > 0 {
         let current_mperm = queue.pop_front().unwrap();
-        
-        if current_mperm == *goal {
-            println!("Found goal!");
-            break;
-        }
+        // do not need to continue if current_mperm is contained in goal
+        if is_contained(&current_mperm, goal) { continue; }
 
         // decremetning elements by one
         for i in 0..current_mperm.len() {
@@ -28,7 +28,6 @@ pub fn build_poset(start: &Vec<u8>, goal: &Vec<u8>) -> HashMap<Vec<u8>, Vec<Vec<
                 new_mperm[i] -= 1;
                 if is_contained(&new_mperm, &current_mperm){
                     if !mperms.contains_key(&new_mperm) {
-                        println!("Adding {:?} to queue", new_mperm);
                         queue.push_back(new_mperm.clone());
                         mperms.insert(new_mperm.clone(), Vec::new());
                     }
@@ -52,7 +51,5 @@ pub fn build_poset(start: &Vec<u8>, goal: &Vec<u8>) -> HashMap<Vec<u8>, Vec<Vec<
             }
         }
     }
-
     return mperms;
-
 }
