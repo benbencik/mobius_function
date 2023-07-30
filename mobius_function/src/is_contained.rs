@@ -1,49 +1,59 @@
 pub fn is_contained(a: &Vec<u8>, b: &Vec<u8>) -> bool {
-    /* 
-    Naive implementation of a function that checks if 
-    multipermutation "a" is contained in "b" 
-    
+    /*
+    Naive implementation of a function that checks if
+    multipermutation "a" is contained in "b"
+
     Assusmes that "a" has |b| or |b-1| elements
     */
+
     let n: usize = b.len();
     let mut valid;
 
     // check for assumption
-    if b.len() < a.len() { return false; }
-    if (b.len() - a.len()) > 1 { return false; }
+    if b.len() < a.len() {
+        return false;
+    }
+    if (b.len() - a.len()) > 1 {
+        return false;
+    }
 
-    if a.len() == b.len(){
-        // itterate through all positions
+    if a.len() == b.len() {
+        // |a| == |b|
         valid = true;
-        for j in 0..n-1 {
-            for k in j+1..n {
+        for j in 0..n - 1 {
+            // itterate through all positions
+            for k in j + 1..n {
                 if (a[j] == a[k] && b[j] != b[k]) || (a[j] <= a[k] && b[j] > b[k]) {
                     valid = false;
                     break;
                 }
             }
         }
-        return valid;
-    }
-    else{
-        // choose omitted element
+        if valid {
+            return true;
+        }
+    } else {
+        // |a| < |b|
         for i in 0..n {
-            // itterate through all positions
+            // choose omitted element
             valid = true;
-            for j in 0..n-2 {
-                for k in j+1..n-1 {
-                    let elem1 = if j < i {j} else {j+1};
-                    let elem2 = if k < i {k} else {k+1};
-                    if (a[j] == a[k] && b[elem1] != b[elem2]) || (a[j] <= a[k] && b[elem1] > b[elem2]) {
+            '_first_index: for j in 0..n - 2 {
+                // itterate through all positions
+                '_second_index: for k in j + 1..n - 1 {
+                    let elem1 = if j < i { j } else { j + 1 };
+                    let elem2 = if k < i { k } else { k + 1 };
+                    if (a[j] == a[k] && b[elem1] != b[elem2])
+                        || (a[j] <= a[k] && b[elem1] > b[elem2])
+                    {
                         valid = false;
-                        break;
+                        break '_first_index;
                     }
                 }
-                if !valid { break; }
             }
-            if valid { return true; }
+            if valid {
+                return true;
+            }
         }
     }
     return false;
-
 }
