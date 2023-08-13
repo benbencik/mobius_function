@@ -58,12 +58,13 @@ pub fn is_contained(a: &Vec<u8>, b: &Vec<u8>) -> bool {
     return false;
 }
 
+#[cfg(test)]
 mod tests {
     use super::is_contained;
 
     #[test]
     fn test_01() {
-        assert_eq!(is_contained(&vec![1, 2, 3] , &vec![1, 2, 3, 4]), true);
+        assert_eq!(is_contained(&vec![1, 2, 3], &vec![1, 2, 3, 4]), true);
     }
 
     #[test]
@@ -83,12 +84,12 @@ mod tests {
 
     #[test]
     fn test_05() {
-        assert_eq!(is_contained(&vec![1, 2, 2] , &vec![1, 2, 3, 3]), true);
+        assert_eq!(is_contained(&vec![1, 2, 2], &vec![1, 2, 3, 3]), true);
     }
 
     #[test]
     fn test_06() {
-        assert_eq!(is_contained(&vec![4, 4, 4] , &vec![4, 3, 2, 1]), false);
+        assert_eq!(is_contained(&vec![4, 4, 4], &vec![4, 3, 2, 1]), false);
     }
 
     #[test]

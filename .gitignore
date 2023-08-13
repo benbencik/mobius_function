@@ -1,4 +1,4 @@
 mobius_function/target
-mobius_function/src/*.exe
-mobius_function/src/*.pdb
+/mobius_function/src/*
+!/mobius_function/src/*.rs
 .vscode/

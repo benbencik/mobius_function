@@ -2,15 +2,14 @@ use crate::multipermutation::Mperm;
 use std::collections::{HashMap, LinkedList};
 
 pub fn build_poset(
-    small: &Mperm,
-    big: &Mperm,
+    poset_bottom: &Mperm,
+    poset_top: &Mperm,
 ) -> (HashMap<Mperm, Vec<Mperm>>, HashMap<Mperm, Vec<Mperm>>) {
     let mut downward_links: HashMap<Mperm, Vec<Mperm>> = HashMap::new();
     let mut upward_links: HashMap<Mperm, Vec<Mperm>> = HashMap::new();
     let mut queue: LinkedList<Mperm> = LinkedList::new();
 
-    queue.push_back(big.clone());
-   
+    queue.push_back(poset_top.clone());
 
     while queue.len() > 0 {
         let current_mperm = queue.pop_front().unwrap();
@@ -18,7 +17,7 @@ pub fn build_poset(
             let links = current_mperm.gen_submperms();
 
             for new_mperm in links {
-                if new_mperm.len() >= small.len() {
+                if new_mperm.len() >= poset_bottom.len() {
                     queue.push_back(new_mperm.clone());
                 }
 
