@@ -1,55 +1,44 @@
-use std::collections::{LinkedList, HashMap};
-use crate::is_contained::is_contained;
+use crate::multipermutation::Mperm;
+use std::collections::{HashMap, LinkedList};
 
-/* 
-NAIVE IMPLEMENTATION =================================================================
-*/
-pub fn build_poset(start: &Vec<u8>, goal: &Vec<u8>) -> HashMap<Vec<u8>, Vec<Vec<u8>>>{
-    /*
-    Poset is built from the goal permutation
-    Hashmap contains links between the multipermutations 
-     */
+pub fn build_poset(
+    small: &Mperm,
+    big: &Mperm,
+) -> (HashMap<Mperm, Vec<Mperm>>, HashMap<Mperm, Vec<Mperm>>) {
+    let mut downward_links: HashMap<Mperm, Vec<Mperm>> = HashMap::new();
+    let mut upward_links: HashMap<Mperm, Vec<Mperm>> = HashMap::new();
+    let mut queue: LinkedList<Mperm> = LinkedList::new();
 
-    let mut queue: LinkedList<Vec<u8>> = LinkedList::new();
-    let mut mperms: HashMap<Vec<u8>, Vec<Vec<u8>>> = HashMap::new();
-
-    queue.push_back(start.clone());
-    mperms.insert(start.clone(), Vec::new());
+    queue.push_back(big.clone());
+   
 
     while queue.len() > 0 {
         let current_mperm = queue.pop_front().unwrap();
-        // do not need to continue if current_mperm is contained in goal
-        if is_contained(&current_mperm, goal) { continue; }
+        if !downward_links.contains_key(&current_mperm) {
+            let links = current_mperm.gen_submperms();
 
-        // decremetning elements by one
-        for i in 0..current_mperm.len() {
-            let mut new_mperm = current_mperm.clone();
-            if new_mperm[i] > 1 {
-                new_mperm[i] -= 1;
-                if is_contained(&new_mperm, &current_mperm){
-                    if !mperms.contains_key(&new_mperm) {
-                        queue.push_back(new_mperm.clone());
-                        mperms.insert(new_mperm.clone(), Vec::new());
-                    }
-                    mperms.get_mut(&current_mperm).unwrap().push(new_mperm.clone());
+            for new_mperm in links {
+                if new_mperm.len() >= small.len() {
+                    queue.push_back(new_mperm.clone());
                 }
-            }
-        }
 
-        // removing single elements
-        if current_mperm.len() > goal.len() {
-            for i in 0..current_mperm.len() {
-                let mut new_mperm = current_mperm.clone();
-                new_mperm.remove(i);
-                if is_contained(&new_mperm, &current_mperm){
-                    if !mperms.contains_key(&new_mperm) {
-                        queue.push_back(new_mperm.clone());
-                        mperms.insert(new_mperm.clone(), Vec::new());
-                    }
-                    mperms.get_mut(&current_mperm).unwrap().push(new_mperm.clone());
+                // downward links
+                if !downward_links.contains_key(&current_mperm) {
+                    downward_links.insert(current_mperm.clone(), vec![new_mperm.clone()]);
+                } else {
+                    let links = downward_links.get_mut(&current_mperm).unwrap();
+                    links.push(new_mperm.clone());
+                }
+
+                // upward links
+                if !upward_links.contains_key(&new_mperm) {
+                    upward_links.insert(new_mperm.clone(), vec![current_mperm.clone()]);
+                } else {
+                    let links = upward_links.get_mut(&new_mperm).unwrap();
+                    links.push(current_mperm.clone());
                 }
             }
         }
     }
-    return mperms;
+    return (downward_links, upward_links);
 }
