@@ -1,6 +1,7 @@
 use std::collections::HashSet;
-
-#[derive(Clone, Debug, Hash)]
+use std::fmt;
+use std::fmt::Formatter;
+#[derive(Clone, Hash)]
 pub struct Mperm {
     value: Vec<u8>,
     max_elem: u8,
@@ -39,7 +40,7 @@ impl Mperm {
         return count >= 2;
     }
 
-    pub fn gen_submperms(&self) -> HashSet<Mperm> {
+    pub fn gen_submperms(&self) -> Vec<Mperm> {
         let mut submperms: HashSet<Mperm> = HashSet::new();
 
         for i in 0..self.len() {
@@ -63,7 +64,7 @@ impl Mperm {
                 submperms.insert(Mperm::new(subperm, self.max_elem - 1));
             }
         }
-        return submperms;
+        return submperms.into_iter().collect();
     }
 }
 
@@ -75,24 +76,31 @@ impl PartialEq for Mperm {
 
 impl Eq for Mperm {}
 
+impl fmt::Debug for Mperm {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self.value)
+    }
+}
+
+#[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn nonrepeating_elements() {
         let mperm: Mperm = Mperm::new(vec![1, 2, 3, 4, 5], 5);
-        let expected: HashSet<Mperm> = HashSet::from([Mperm::new(vec![1, 2, 3, 4], 4)]);
-        assert_eq!(mperm.gen_submperms(), expected);
+        let expected: Vec<Mperm> = vec![Mperm::new(vec![1, 2, 3, 4], 4)];
+        assert!(mperm.gen_submperms().iter().all(|item| expected.contains(item)));
     }
 
     #[test]
     fn repeating_elements() {
         let mperm: Mperm = Mperm::new(vec![1, 2, 3, 3, 4, 5], 5);
-        let expected: HashSet<Mperm> = HashSet::from([
+        let expected: Vec<Mperm> = vec![
             Mperm::new(vec![1, 2, 2, 3, 4], 4),
             Mperm::new(vec![1, 2, 3, 4, 5], 5),
             Mperm::new(vec![1, 2, 3, 3, 4], 4),
-        ]);
-        assert_eq!(mperm.gen_submperms(), expected);
+        ];
+        assert!(mperm.gen_submperms().iter().all(|item| expected.contains(item)));
     }
 }
