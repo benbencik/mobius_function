@@ -16,7 +16,7 @@ pub fn build_poset(
         if &current_mperm == poset_bottom {
             continue;
         }
-        
+
         if !downward_links.contains_key(&current_mperm) {
             let links = current_mperm.gen_submperms();
 

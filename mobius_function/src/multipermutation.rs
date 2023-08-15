@@ -4,22 +4,17 @@ use std::fmt::Formatter;
 #[derive(Clone, Hash)]
 pub struct Mperm {
     value: Vec<u8>,
-    max_elem: u8,
 }
 
 impl Mperm {
-    pub fn new(value: Vec<u8>, max_elem: u8) -> Mperm {
-        let mperm = Mperm { value, max_elem };
+    pub fn new(value: Vec<u8>) -> Mperm {
+        let mperm = Mperm { value };
         // mperm.check_validity(); // ! later will be removed
         return mperm;
     }
 
     fn check_validity(&self) {
-        // multipermutation should contain each element from range [1, max_elem]
-        assert!(self.value.len() > self.max_elem as usize);
-        for i in 1..=self.max_elem {
-            assert!(self.value.contains(&i));
-        }
+        // TODO
     }
 
     pub fn len(&self) -> usize {
@@ -41,6 +36,9 @@ impl Mperm {
     }
 
     pub fn gen_submperms(&self) -> Vec<Mperm> {
+        if self.value.len() == 1 {
+            return Vec::new();
+        }
         let mut submperms: HashSet<Mperm> = HashSet::new();
 
         for i in 0..self.len() {
@@ -49,7 +47,7 @@ impl Mperm {
             if self.contains_at_least_two(self.value[i]) {
                 subperm = self.value.clone();
                 subperm.remove(i);
-                submperms.insert(Mperm::new(subperm, self.max_elem));
+                submperms.insert(Mperm::new(subperm));
             } else {
                 subperm = Vec::new();
                 for j in 0..self.len() {
@@ -61,7 +59,7 @@ impl Mperm {
                         }
                     }
                 }
-                submperms.insert(Mperm::new(subperm, self.max_elem - 1));
+                submperms.insert(Mperm::new(subperm));
             }
         }
         return submperms.into_iter().collect();
@@ -88,19 +86,25 @@ mod tests {
 
     #[test]
     fn nonrepeating_elements() {
-        let mperm: Mperm = Mperm::new(vec![1, 2, 3, 4, 5], 5);
-        let expected: Vec<Mperm> = vec![Mperm::new(vec![1, 2, 3, 4], 4)];
-        assert!(mperm.gen_submperms().iter().all(|item| expected.contains(item)));
+        let mperm: Mperm = Mperm::new(vec![1, 2, 3, 4, 5]);
+        let expected: Vec<Mperm> = vec![Mperm::new(vec![1, 2, 3, 4])];
+        assert!(mperm
+            .gen_submperms()
+            .iter()
+            .all(|item| expected.contains(item)));
     }
 
     #[test]
     fn repeating_elements() {
-        let mperm: Mperm = Mperm::new(vec![1, 2, 3, 3, 4, 5], 5);
+        let mperm: Mperm = Mperm::new(vec![1, 2, 3, 3, 4, 5]);
         let expected: Vec<Mperm> = vec![
-            Mperm::new(vec![1, 2, 2, 3, 4], 4),
-            Mperm::new(vec![1, 2, 3, 4, 5], 5),
-            Mperm::new(vec![1, 2, 3, 3, 4], 4),
+            Mperm::new(vec![1, 2, 2, 3, 4]),
+            Mperm::new(vec![1, 2, 3, 4, 5]),
+            Mperm::new(vec![1, 2, 3, 3, 4]),
         ];
-        assert!(mperm.gen_submperms().iter().all(|item| expected.contains(item)));
+        assert!(mperm
+            .gen_submperms()
+            .iter()
+            .all(|item| expected.contains(item)));
     }
 }
