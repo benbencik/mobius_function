@@ -1,26 +1,29 @@
 use crate::multipermutation::Mperm;
-use std::collections::{HashMap, LinkedList, HashSet};
+use std::collections::{HashMap, HashSet, LinkedList};
 
-fn dfs(
+fn dfs_sum(
     current: &Mperm,
-    poset_top: &Mperm,
     upward_links: &HashMap<Mperm, Vec<Mperm>>,
     values: &HashMap<Mperm, i32>,
     visited: &mut HashSet<Mperm>,
 ) -> i32 {
     visited.insert(current.clone());
-    if current == poset_top {
-        return 1;
-    } else {
-        let mut sum = 0;
-        let links = upward_links.get(current).unwrap();
-        for link in links {
-            if !visited.contains(link) {
-                sum += dfs(link, poset_top, upward_links, values, visited);
+    let mut sum = 0;
+    let links = upward_links.get(current);
+    match links {
+        Some(x) => {
+            for link in x {
+                if !visited.contains(link) {
+                    sum += dfs_sum(link, upward_links, values, visited);
+                }
             }
         }
-        return -sum;
+        None => {}
     }
+    if values.get(current).is_some() {
+        sum += values.get(current).unwrap();
+    }
+    return sum;
 }
 
 pub fn naive(
@@ -35,13 +38,28 @@ pub fn naive(
 
     while queue.len() > 0 {
         let current = queue.pop_front().unwrap();
-        let mut visited: HashSet<Mperm> = HashSet::new();
-        let val = dfs(&current, poset_top, upward_links, &values, &mut visited);
+
+        // node was already visited
+        if values.contains_key(&current) {
+            continue;
+        }
+
+        // calculate value of the node
+        let val: i32;
+        if current == *poset_top {
+            val = 1;
+        } else {
+            let mut visited: HashSet<Mperm> = HashSet::new();
+            val = -dfs_sum(&current, upward_links, &values, &mut visited);
+        }
         values.insert(current.clone(), val);
 
+        // poset bottom reached, do not continue
         if &current == poset_bottom {
             return val;
         }
+
+        // add new nodes to queue
         let links = downward_links.get(&current).unwrap();
         for link in links {
             queue.push_back(link.clone());

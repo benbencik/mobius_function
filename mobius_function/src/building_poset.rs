@@ -13,6 +13,10 @@ pub fn build_poset(
 
     while queue.len() > 0 {
         let current_mperm = queue.pop_front().unwrap();
+        if &current_mperm == poset_bottom {
+            continue;
+        }
+        
         if !downward_links.contains_key(&current_mperm) {
             let links = current_mperm.gen_submperms();
 
