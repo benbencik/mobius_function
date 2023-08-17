@@ -2,8 +2,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
 
-pub fn load_tests(path: String) -> Result<(Vec<Vec<u8>>, Vec<i32>), Box<dyn std::error::Error>> {
-    println!("{}", path);
+pub fn load_tests(path: &str) -> Result<(Vec<Vec<u8>>, Vec<i32>), Box<dyn std::error::Error>> {
     let path = Path::new(&path);
     let file = File::open(path)?;
     let reader = BufReader::new(file);

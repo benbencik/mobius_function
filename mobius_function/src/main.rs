@@ -13,15 +13,13 @@ fn main() {
     let (downward_links, upward_links) = building_poset::build_poset(&bottom, &top);
     let result = mobius_func::naive(&bottom, &top, &downward_links, &upward_links);
     println!("Result of μ({:?}, {:?}) is: {}", bottom, top, result);
-
 }
-
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    
-    fn run_test_file(path: String) {
+
+    fn run_test_file(path: &str) {
         let res = io::load_tests(path);
         match res {
             Ok((tests, result)) => {
@@ -40,26 +38,26 @@ mod tests {
 
     #[test]
     fn test5() {
-        run_test_file(String::from("../test_files/all5.txt"));
+        run_test_file("../test_files/all5.txt");
     }
 
     #[test]
     fn test6() {
-        run_test_file(String::from("../test_files/all5.txt"));
+        run_test_file("../test_files/all5.txt");
     }
 
     #[test]
     fn test7() {
-        run_test_file(String::from("../test_files/all5.txt"));
+        run_test_file("../test_files/all5.txt");
     }
 
     #[test]
     fn test8() {
-        run_test_file(String::from("../test_files/all5.txt"));
+        run_test_file("../test_files/all5.txt");
     }
 
     #[test]
     fn test9() {
-        run_test_file(String::from("../test_files/all5.txt"));
+        run_test_file("../test_files/all5.txt");
     }
 }
