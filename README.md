@@ -1,5 +1,9 @@
 # Effective Calculation of Möbius Function on Poset
 
+## Running the project
+
+To run this Rust project, make sure you have Rust and Cargo installed on your system. If not, you can follow steps on [the installation page](https://www.rust-lang.org/tools/install). After cloning the repository the executable can be run with `cargo run`. Similarly the tests can be run with `cargo test` and benchmarks with `cargo bench`.
+
 ## Definitions
 
 **Partially ordered set** has a homogenous relation $\leq$ on set $P$ such that all of $a, b , c \in P$ must satisfy the following properties:
