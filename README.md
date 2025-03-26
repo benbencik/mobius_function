@@ -1,6 +1,6 @@
 
 
-# Effective Calculation of Möbius Function on Poset
+# Effective Calculation of Möbius Function on Multipermutations
 
 ## Running the project
 
